@@ -1,0 +1,43 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Primeiro
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="exercicio">
+            <p:panel header="Primeira tela">
+                <p:messages showDetail="true" closable="true"/>
+                <!-- Formulário com painel de duas colunas -->
+                <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom:1em;">
+                    <p:outputLabel for="nome" value="Nome:"
+                                   style="text-align: left; white-space: nowrap;"/>
+                    <p:inputText id="nome" value="#{produtoBean.produto.nome}"
+                                 style="width:100%;" required="true" requiredMessage="O nome é obrigatório">
+                        <f:validateLength min="3" maximum="50"/>
+                    </p:inputText>
+
+                    <p:outputLabel for="data" value="Data:" styleClass="label"/>
+                    <p:calendar id="data" value="#{produtoBean.produto.data}"
+                                pattern="dd/MM/yyyy" showIcon="true" required="true"/>
+
+                </p:panelGrid>
+            </p:panel>
+
+            <p:commandButton value="Salvar"
+                             update="@form"
+                             icon="pi pi-save"
+                             ajax="true"/>
+
+        </h:form>
+    </ui:define>
+
+    <ui:define name="footer">
+        Rodapé – Primeiro
+    </ui:define>
+</ui:composition>
