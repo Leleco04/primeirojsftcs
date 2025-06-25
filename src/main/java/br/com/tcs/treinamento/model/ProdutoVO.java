@@ -1,5 +1,8 @@
 package br.com.tcs.treinamento.model;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 public class ProdutoVO {
@@ -27,5 +30,10 @@ public class ProdutoVO {
 
     public void setData(Date data) {
         this.data = data;
+    }
+
+    public String getDataToString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(data);
     }
 }
