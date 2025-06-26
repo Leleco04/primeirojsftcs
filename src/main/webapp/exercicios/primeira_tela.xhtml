@@ -18,13 +18,12 @@
                     <p:outputLabel for="nome" value="Nome:"
                                    style="text-align: left; white-space: nowrap;"/>
                     <p:inputText id="nome" value="#{produtoBean.produto.nome}"
-                                 style="width:100%;" required="true" requiredMessage="O nome é obrigatório">
-                        <f:validateLength min="3" maximum="50"/>
+                                 style="width:100%;" required="false" requiredMessage="O nome é obrigatório">
                     </p:inputText>
 
                     <p:outputLabel for="data" value="Data:" styleClass="label"/>
                     <p:calendar id="data" value="#{produtoBean.produto.data}"
-                                pattern="dd/MM/yyyy" showIcon="true" required="true"/>
+                                pattern="dd/MM/yyyy" showIcon="true" required="false"/>
 
                 </p:panelGrid>
             </p:panel>
@@ -34,6 +33,27 @@
                              action="#{produtoBean.adicionarProduto}"
                              icon="pi pi-save"
                              ajax="true"/>
+
+            <!-- Diálogo para exibir a lista de campos não preenchidos -->
+            <p:dialog widgetVar="errorDialog" header="ERRO!"
+                      modal="true" closable="false" resizable="false">
+                <h:outputText value="Você deve preencher todos os campos." escape="false" />
+                <f:facet name="footer">
+                    <p:commandButton value="Fechar"
+                                     onclick="PF('errorDialog').hide();"
+                                     type="button" />
+                </f:facet>
+            </p:dialog>
+            <!-- Diaglogo de sucesso-->
+            <p:dialog widgetVar="successDialog" header="Sucesso"
+                      modal="true" closable="false" resizable="false">
+                <h:outputText value="Produto cadastrado com sucesso!" />
+                <f:facet name="footer">
+                    <p:commandButton value="Ok"
+                                     onclick="PF('successDialog').hide();"
+                                     type="button" />
+                </f:facet>
+            </p:dialog>
 
         </h:form>
     </ui:define>

@@ -11,12 +11,26 @@
 
     <ui:define name="content">
         <h:form id="formConsulta">
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; margin-bottom: 1rem; justify-content: end;">
+                <p:commandLink styleClass="mr-2 mb-2" ajax="false" style="border: 1px solid lightgray; border-radius: 5px; width: 40px; display: flex; justify-content: center">
+                    <p:graphicImage library="images" name="excel.png" width="28px" />
+                    <p:dataExporter type="xls" target="tbl" fileName="pessoas"/>
+                </p:commandLink>
+
+                <p:commandLink styleClass="mr-2 mb-2" ajax="false" style="border: 1px solid lightgray; border-radius: 5px; width: 40px; display: flex; justify-content: center">
+                    <p:graphicImage library="images" name="pdf.png" width="28px" />
+                    <p:dataExporter type="pdf" target="tbl" fileName="pessoas"/>
+                </p:commandLink>
+            </div>
+
             <p:panel header="Lista de Pessoas Cadastradas" style="width:100%; margin:0 auto;">
                 <p:messages showDetail="true" closable="true" />
 
                 <div style="width:100%;">
                     <div style="transform: scale(0.9); transform-origin: top left; width:100%;">
                         <p:dataTable value="#{consultaPessoaBean.pessoas}"
+                                     id="tbl"
                                      var="p"
                                      paginator="true"
                                      paginatorPosition="bottom"
@@ -29,15 +43,15 @@
                                      style="width:100%; table-layout:auto;">
 
                             <p:column headerText="Nome" style="width:25%;">
-                                #{p.nome}
+                                <h:outputText value="#{p.nome}"/>
                             </p:column>
 
                             <p:column headerText="Idade" style="width:6%; text-align:center;">
-                                #{p.idade}
+                                <h:outputText value="#{p.idade}"/>
                             </p:column>
 
                             <p:column headerText="Email" style="width:20%;">
-                                #{p.email}
+                                <h:outputText value="#{p.email}"/>
                             </p:column>
 
                             <p:column headerText="Data de Nascimento" style="width:12%;">
@@ -57,10 +71,10 @@
                             </p:column>
 
                             <p:column headerText="Status" style="width:10%;">
-                                #{p.ativo ? 'Ativo' : 'Inativo'}
+                                <h:outputText value="#{p.ativo ? 'Ativo' : 'Inativo'}"/>
                             </p:column>
 
-                            <p:column headerText="Ações" style="text-align:center; width:300px;">
+                            <p:column headerText="Ações" style="text-align:center; width:300px;" exportable="false">
                                 <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
                                     <p:commandButton value="Alterar"
                                                      action="#{consultaPessoaBean.prepararEdicao(p)}"
