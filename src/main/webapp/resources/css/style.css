@@ -22,3 +22,33 @@ input,
 .ui-calendar input {
   width: calc(100% - 30px); /* espaço pro botão de calendário */
 }
+
+.cpf-mask::placeholder,
+.cnpj-mask::placeholder {
+  color: #333; /* Ou a cor do seu texto de input normal */
+  opacity: 1; /* Garante que não seja transparente */
+}
+
+.cpf-mask::-webkit-input-placeholder,
+.cnpj-mask::-webkit-input-placeholder {
+  color: #333;
+  opacity: 1;
+}
+
+.cpf-mask::-moz-placeholder,
+.cnpj-mask::-moz-placeholder {
+  color: #333;
+  opacity: 1;
+}
+
+.cpf-mask:-ms-input-placeholder,
+.cnpj-mask:-ms-input-placeholder {
+  color: #333;
+  opacity: 1;
+}
+
+.cpf-mask:-moz-placeholder,
+.cnpj-mask:-moz-placeholder {
+  color: #333;
+  opacity: 1;
+}
