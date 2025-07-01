@@ -15,7 +15,7 @@ import br.com.tcs.treinamento.service.PessoaService;
 import br.com.tcs.treinamento.service.impl.PessoaServiceImpl;
 import org.primefaces.PrimeFaces;
 
-@ManagedBean(name="cadastroBean")
+@ManagedBean(name = "cadastroBean")
 @ViewScoped
 public class CadastroBean implements Serializable {
     private static final long serialVersionUID = 3450069247988201468L;
@@ -33,43 +33,8 @@ public class CadastroBean implements Serializable {
      * Método que converte o VO para a entidade e chama o service para persistir.
      * Após persistir, exibe o popup de sucesso.
      */
+
     public void confirmar() {
-        // Converte o VO para a entidade Pessoa
-        Pessoa pessoa = new Pessoa();
-        pessoa.setNome(cadastrarPessoa.getNome());
-        pessoa.setIdade(cadastrarPessoa.getIdade());
-        pessoa.setEmail(cadastrarPessoa.getEmail());
-        pessoa.setData(cadastrarPessoa.getData());
-        pessoa.setTipoDocumento(cadastrarPessoa.getTipoDocumento());
-        pessoa.setNumeroCPF(cadastrarPessoa.getNumeroCPF());
-        pessoa.setNumeroCNPJ(cadastrarPessoa.getNumeroCNPJ());
-        pessoa.setAtivo(true);
-
-        // Chama o service para persistir a entidade
-        try {
-            pessoaService.cadastrar(pessoa);
-            // Exibe o popup de sucesso após a confirmação
-            PrimeFaces.current().executeScript("PF('successDialog').show();");
-        } catch (Exception e) {
-            // Em caso de erro na persistência, exibe o diálogo de erro
-            errorMessage = "Erro ao cadastrar pessoa: " + e.getMessage();
-            PrimeFaces.current().executeScript("PF('errorDialog').show();");
-            return;
-        }
-    }
-
-    public void limpar() {
-        cadastrarPessoa.setNome(null);
-        cadastrarPessoa.setIdade(null);
-        cadastrarPessoa.setEmail(null);
-        cadastrarPessoa.setData(null);
-        cadastrarPessoa.setTipoDocumento(null);
-        cadastrarPessoa.setNumeroCPF(null);
-        cadastrarPessoa.setNumeroCNPJ(null);
-        errorMessage = null;
-    }
-
-    public void validarCampos() {
         List<String> erros = new ArrayList<>();
 
         if (cadastrarPessoa.getNome() == null || cadastrarPessoa.getNome().trim().isEmpty()) {
@@ -88,43 +53,83 @@ public class CadastroBean implements Serializable {
             erros.add("Tipo de documento não informado.");
         } else {
             if ("CPF".equals(cadastrarPessoa.getTipoDocumento())) {
-                if (cadastrarPessoa.getNumeroCPF() == null || cadastrarPessoa.getNumeroCPF().trim().isEmpty() ||
-                        cadastrarPessoa.getNumeroCPF().trim().length() < 11) {
+                String cpfSemMascara = cadastrarPessoa.getNumeroCPF() != null ? cadastrarPessoa.getNumeroCPF().replaceAll("[^0-9]", "") : "";
+                if (cpfSemMascara.isEmpty() || cpfSemMascara.length() < 11) {
                     erros.add("CPF não informado ou incompleto (deve conter 11 dígitos).");
                 }
             } else if ("CNPJ".equals(cadastrarPessoa.getTipoDocumento())) {
-                if (cadastrarPessoa.getNumeroCNPJ() == null || cadastrarPessoa.getNumeroCNPJ().trim().isEmpty() ||
-                        cadastrarPessoa.getNumeroCNPJ().trim().length() < 14) {
+                String cnpjSemMascara = cadastrarPessoa.getNumeroCNPJ() != null ? cadastrarPessoa.getNumeroCNPJ().replaceAll("[^0-9]", "") : "";
+                if (cnpjSemMascara.isEmpty() || cnpjSemMascara.length() < 14) {
                     erros.add("CNPJ não informado ou incompleto (deve conter 14 dígitos).");
                 }
             }
         }
 
         if (!erros.isEmpty()) {
-            errorMessage = String.join("<br/>", erros);
+            this.errorMessage = String.join("<br/>", erros);
             PrimeFaces.current().executeScript("PF('errorDialog').show();");
-        } else {
-            PrimeFaces.current().executeScript("PF('confirmDialog').show();");
+            return;
+        }
+
+        Pessoa pessoa = new Pessoa();
+        pessoa.setNome(cadastrarPessoa.getNome());
+        pessoa.setIdade(cadastrarPessoa.getIdade());
+        pessoa.setEmail(cadastrarPessoa.getEmail());
+        pessoa.setData(cadastrarPessoa.getData());
+        pessoa.setTipoDocumento(cadastrarPessoa.getTipoDocumento());
+        pessoa.setAtivo(true);
+
+        if ("CPF".equals(cadastrarPessoa.getTipoDocumento())) {
+            pessoa.setNumeroCPF(cadastrarPessoa.getNumeroCPF().replaceAll("[^0-9]", ""));
+        } else if ("CNPJ".equals(cadastrarPessoa.getTipoDocumento())) {
+            pessoa.setNumeroCNPJ(cadastrarPessoa.getNumeroCNPJ().replaceAll("[^0-9]", ""));
+        }
+
+        try {
+            pessoaService.cadastrar(pessoa);
+            PrimeFaces.current().executeScript("PF('successDialog').show();");
+            limpar();
+        } catch (Exception e) {
+            this.errorMessage = "Erro ao cadastrar pessoa: " + e.getMessage();
+            PrimeFaces.current().executeScript("PF('errorDialog').show();");
         }
     }
+
+    public void limpar() {
+        cadastrarPessoa.setNome(null);
+        cadastrarPessoa.setIdade(null);
+        cadastrarPessoa.setEmail(null);
+        cadastrarPessoa.setData(null);
+        cadastrarPessoa.setTipoDocumento(null);
+        cadastrarPessoa.setNumeroCPF(null);
+        cadastrarPessoa.setNumeroCNPJ(null);
+        errorMessage = null;
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
+
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
     public PessoaVO getCadastrarPessoa() {
         return cadastrarPessoa;
     }
+
     public void setCadastrarPessoa(PessoaVO cadastrarPessoa) {
         this.cadastrarPessoa = cadastrarPessoa;
     }
+
     public PessoaService getPessoaService() {
         return pessoaService;
     }
+
     public void setPessoaService(PessoaService pessoaService) {
         this.pessoaService = pessoaService;
     }
+
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         // Realiza a deserialização padrão
         ois.defaultReadObject();

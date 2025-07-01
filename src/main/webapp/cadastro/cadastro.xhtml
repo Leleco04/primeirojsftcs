@@ -11,10 +11,6 @@
 
     <ui:define name="content">
         <h:form id="formCadastro">
-            <!-- Inclui o modal (confirmarModel.xhtml) para reutilização -->
-            <ui:include src="/model/confirmarModel.xhtml">
-                <ui:param name="modalBean" value="#{cadastroBean}"/>
-            </ui:include>
 
             <p:panel header="Formulário de Cadastro" style="width:600px;">
                 <!-- Mensagens gerais de erro -->
@@ -76,13 +72,14 @@
                                  icon="pi pi-refresh"
                                  styleClass="ui-button-secondary"/>
 
-                <!-- Botão Salvar chama o método de validação na bean.
-                     Se a validação for bem-sucedida, o método validarCampos() invoca o modal de confirmação. -->
                 <p:commandButton value="Salvar"
-                                 action="#{cadastroBean.validarCampos}"
+                                 action="#{cadastroBean.confirmar}"
                                  update="@form"
-                                 icon="pi pi-save"
-                                 ajax="true"/>
+                                 icon="pi pi-save">
+                    <p:confirm header="Confirmação"
+                               message="Deseja realmente salvar o cadastro?"
+                               icon="pi pi-exclamation-triangle"/>
+                </p:commandButton>
 
             </p:panel>
 
@@ -123,6 +120,11 @@
                 });
     //]]>
             </h:outputScript>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                <p:commandButton value="Não" type="button" styleClass="ui-button-secondary ui-confirmdialog-no"/>
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />
+            </p:confirmDialog>
         </h:form>
     </ui:define>
 
