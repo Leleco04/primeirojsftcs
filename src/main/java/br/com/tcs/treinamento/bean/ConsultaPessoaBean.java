@@ -79,18 +79,58 @@ public class ConsultaPessoaBean implements Serializable {
      * Após persistir, exibe o popup de sucesso.
      */
     public void confirmar() {
-        // Converte o VO para a entidade Pessoa
+        List<String> erros = new ArrayList<>();
+
+        if (pessoaSelecionada.getNome() == null || pessoaSelecionada.getNome().trim().isEmpty()) {
+            erros.add("Nome não informado.");
+        }
+        if (pessoaSelecionada.getIdade() == null) {
+            erros.add("Idade não informada.");
+        }
+
+        if (pessoaSelecionada.getTipoDocumento() == null || pessoaSelecionada.getTipoDocumento().trim().isEmpty()) {
+            erros.add("Tipo de documento não informado.");
+        } else {
+            if ("CPF".equals(pessoaSelecionada.getTipoDocumento())) {
+                String cpfSemMascara = pessoaSelecionada.getNumeroCPF() != null ? pessoaSelecionada.getNumeroCPF().replaceAll("[^0-9]", "") : "";
+                if (cpfSemMascara.isEmpty() || cpfSemMascara.length() < 11) {
+                    erros.add("CPF não informado ou incompleto (deve conter 11 dígitos).");
+                }
+            } else if ("CNPJ".equals(pessoaSelecionada.getTipoDocumento())) {
+                String cnpjSemMascara = pessoaSelecionada.getNumeroCNPJ() != null ? pessoaSelecionada.getNumeroCNPJ().replaceAll("[^0-9]", "") : "";
+                if (cnpjSemMascara.isEmpty() || cnpjSemMascara.length() < 14) {
+                    erros.add("CNPJ não informado ou incompleto (deve conter 14 dígitos).");
+                }
+            }
+        }
+
+        if (!erros.isEmpty()) {
+            this.errorMessage = String.join("<br/>", erros);
+            PrimeFaces.current().executeScript("PF('errorDialog').show();");
+            return; // Para aqui
+        }
+
+
         Pessoa pessoa = mapPessoaEntity();
-        // Chama o service para persistir a entidade
         try {
             pessoaService.atualizar(pessoa);
-            // Exibe o popup de sucesso após a confirmação
             PrimeFaces.current().executeScript("PF('successDialog').show();");
         } catch (Exception e) {
-            // Em caso de erro na persistência, exibe o diálogo de erro
-            errorMessage = "Erro ao cadastrar pessoa: " + e.getMessage();
+            this.errorMessage = "Erro ao atualizar cadastro: " + e.getMessage();
             PrimeFaces.current().executeScript("PF('errorDialog').show();");
-            return;
+        }
+    }
+
+    public void onTipoDocumentoChange() {
+        String tipo = pessoaSelecionada.getTipoDocumento();
+
+        if ("CPF".equals(tipo)) {
+            pessoaSelecionada.setNumeroCNPJ(null);
+        } else if ("CNPJ".equals(tipo)) {
+            pessoaSelecionada.setNumeroCPF(null);
+        } else {
+            pessoaSelecionada.setNumeroCPF(null);
+            pessoaSelecionada.setNumeroCNPJ(null);
         }
     }
 
@@ -125,45 +165,6 @@ public class ConsultaPessoaBean implements Serializable {
             errorMessage = "Erro ao cadastrar pessoa: " + e.getMessage();
             PrimeFaces.current().executeScript("PF('errorDialog').show();");
             return;
-        }
-    }
-
-    public void validarCampos() {
-        List<String> erros = new ArrayList<>();
-
-        if (pessoaSelecionada.getNome() == null || pessoaSelecionada.getNome().trim().isEmpty()) {
-            erros.add("Nome não informado.");
-        }
-        if (pessoaSelecionada.getIdade() == null) {
-            erros.add("Idade não informada.");
-        }
-        if (pessoaSelecionada.getEmail() == null || pessoaSelecionada.getEmail().trim().isEmpty()) {
-            erros.add("E-mail não informado.");
-        }
-        if (pessoaSelecionada.getData() == null) {
-            erros.add("Data de nascimento não informada.");
-        }
-        if (pessoaSelecionada.getTipoDocumento() == null || pessoaSelecionada.getTipoDocumento().trim().isEmpty()) {
-            erros.add("Tipo de documento não informado.");
-        } else {
-            if ("CPF".equals(pessoaSelecionada.getTipoDocumento())) {
-                if (pessoaSelecionada.getNumeroCPF() == null || pessoaSelecionada.getNumeroCPF().trim().isEmpty() ||
-                        pessoaSelecionada.getNumeroCPF().trim().length() < 11) {
-                    erros.add("CPF não informado ou incompleto (deve conter 11 dígitos).");
-                }
-            } else if ("CNPJ".equals(pessoaSelecionada.getTipoDocumento())) {
-                if (pessoaSelecionada.getNumeroCNPJ() == null || pessoaSelecionada.getNumeroCNPJ().trim().isEmpty() ||
-                        pessoaSelecionada.getNumeroCNPJ().trim().length() < 14) {
-                    erros.add("CNPJ não informado ou incompleto (deve conter 14 dígitos).");
-                }
-            }
-        }
-
-        if (!erros.isEmpty()) {
-            errorMessage = String.join("<br/>", erros);
-            PrimeFaces.current().executeScript("PF('errorDialog').show();");
-        } else {
-            PrimeFaces.current().executeScript("PF('confirmDialog').show();");
         }
     }
 

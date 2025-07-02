@@ -61,7 +61,9 @@
                             </p:column>
 
                             <p:column headerText="CPF / CNPJ" style="width:17%;">
-                                <h:outputText value="#{not empty p.numeroCPF ? p.numeroCPF : p.numeroCNPJ}" />
+                                <p:inputMask value="#{not empty p.numeroCPF ? p.numeroCPF : p.numeroCNPJ}"
+                                             mask="#{not empty p.numeroCPF ? '999.999.999-99' : '99.999.999/9999-99'}"
+                                             disabled="true" />
                             </p:column>
 
                             <p:column headerText="Data da manutenção" style="width:18%;">
